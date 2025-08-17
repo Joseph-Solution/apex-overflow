@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Navigate, Link } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Plus, LogOut } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
@@ -99,7 +99,7 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <header className="border-b">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-3xl font-bold">Apex Overflow</h1>
+          <h1 className="text-3xl font-bold text-foreground">Apex Overflow</h1>
           <div className="flex items-center space-x-4">
             <span className="text-sm text-muted-foreground">
               Welcome, {user.email}
@@ -115,7 +115,7 @@ const Index = () => {
       <main className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h2 className="text-2xl font-semibold mb-2">Tasks</h2>
+            <h2 className="text-2xl font-semibold mb-2 text-foreground">Tasks</h2>
             <p className="text-muted-foreground">
               Manage your tasks and stay organized
             </p>
