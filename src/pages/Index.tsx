@@ -9,13 +9,25 @@ import TaskDialog from '@/components/TaskDialog';
 import { toast } from '@/hooks/use-toast';
 
 const Index = () => {
-  const { user, signOut } = useAuth();
-  const { tasks, loading, createTask, updateTask, deleteTask } = useTasks();
+  const { user, loading, signOut } = useAuth();
+  const { tasks, loading: tasksLoading, createTask, updateTask, deleteTask } = useTasks();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | undefined>();
 
+  console.log('Index page - User:', user?.email || 'No user', 'Loading:', loading);
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg">Loading...</div>
+      </div>
+    );
+  }
+
   // Redirect to auth if not authenticated
   if (!user) {
+    console.log('No user, redirecting to auth');
     return <Navigate to="/auth" replace />;
   }
 
@@ -126,7 +138,7 @@ const Index = () => {
           </Button>
         </div>
 
-        {loading ? (
+        {tasksLoading ? (
           <div className="text-center py-8">
             <p className="text-muted-foreground">Loading tasks...</p>
           </div>
