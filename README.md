@@ -36,6 +36,27 @@ npm i
 npm run dev
 ```
 
+## Docker Development Environment
+
+For a complete development environment with Supabase backend services, use Docker:
+
+```sh
+# Copy environment configuration
+cp .env.example .env
+
+# Start the full development environment
+docker-compose up
+```
+
+See the [Docker Setup Guide](./docs/DOCKER_SETUP.md) for detailed instructions.
+
+## Documentation
+
+All project documentation is located in the [`docs/`](./docs/) folder:
+
+- [Docker Development Environment](./docs/DOCKER_SETUP.md) - Complete setup guide
+- [Documentation Index](./docs/README.md) - Full documentation overview
+
 **Edit a file directly in GitHub**
 
 - Navigate to the desired file(s).

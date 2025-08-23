@@ -1,0 +1,36 @@
+# Example override file for local development customization
+# Copy this to docker-compose.override.yml and modify as needed
+
+version: '3.8'
+
+services:
+  frontend:
+    # Override environment variables for local development
+    environment:
+      - VITE_DEBUG=true
+      - VITE_LOG_LEVEL=debug
+    # Add additional volumes if needed
+    volumes:
+      - ./custom-config:/app/config:ro
+    # Note: To override ports, set FRONTEND_PORT in your .env file
+    # Example: FRONTEND_PORT=3000 will map to localhost:3000
+
+  supabase-db:
+    # Override database configuration if needed
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    # Add custom initialization scripts
+    volumes:
+      - supabase-db-data:/var/lib/postgresql/data
+      - ./supabase/migrations:/docker-entrypoint-initdb.d/migrations:ro
+      - ./supabase/seed.sql:/docker-entrypoint-initdb.d/seed.sql:ro
+
+  # Add additional services for local development if needed
+  # redis:
+  #   image: redis:7-alpine
+  #   ports:
+  #     - "6379:6379"
+  #   networks:
+  #     - apex-overflow-network
