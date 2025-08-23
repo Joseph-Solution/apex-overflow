@@ -15,8 +15,11 @@ services:
       - NODE_ENV=development
       - VITE_SUPABASE_URL=http://localhost:${SUPABASE_API_PORT:-54321}
       - VITE_SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+      - VITE_SUPABASE_AUTH_URL=http://localhost:9999
     depends_on:
       - supabase-db
+      - supabase-rest
+      - supabase-auth
     networks:
       - apex-overflow-network
     command: bun run dev --host 0.0.0.0 --port 8080
@@ -42,15 +45,34 @@ services:
       timeout: 5s
       retries: 5
 
-  # Supabase API Gateway
-  supabase-api:
+  # PostgREST API for database REST interface
+  supabase-rest:
+    image: postgrest/postgrest:v12.0.1
+    ports:
+      - "${SUPABASE_API_PORT:-54321}:3000"
+    environment:
+      PGRST_DB_URI: postgres://postgres:postgres@supabase-db:5432/postgres
+      PGRST_DB_SCHEMAS: public
+      PGRST_DB_ANON_ROLE: anon
+      PGRST_JWT_SECRET: ${JWT_SECRET:-super-secret-jwt-token-with-at-least-32-characters-long}
+      PGRST_DB_USE_LEGACY_GUCS: "false"
+      PGRST_APP_SETTINGS_JWT_SECRET: ${JWT_SECRET:-super-secret-jwt-token-with-at-least-32-characters-long}
+      PGRST_APP_SETTINGS_JWT_EXP: 3600
+    depends_on:
+      supabase-db:
+        condition: service_healthy
+    networks:
+      - apex-overflow-network
+    restart: unless-stopped
+
+  # Supabase Auth (GoTrue) for authentication
+  supabase-auth:
     image: supabase/gotrue:v2.132.3
     ports:
-      - "${SUPABASE_API_PORT:-54321}:8000"
+      - "9999:8080"
     environment:
-      API_EXTERNAL_URL: http://localhost:${SUPABASE_API_PORT:-54321}
       GOTRUE_API_HOST: 0.0.0.0
-      GOTRUE_API_PORT: 8000
+      GOTRUE_API_PORT: 8080
       GOTRUE_DB_DRIVER: postgres
       GOTRUE_DB_DATABASE_URL: postgres://postgres:postgres@supabase-db:5432/postgres?sslmode=disable
       GOTRUE_SITE_URL: http://localhost:${FRONTEND_PORT:-8080}
@@ -65,11 +87,15 @@ services:
       GOTRUE_SMTP_PORT: 587
       GOTRUE_SMTP_USER: ""
       GOTRUE_SMTP_PASS: ""
+      GOTRUE_DISABLE_SIGNUP: false
+      GOTRUE_MAILER_SECURE_EMAIL_CHANGE_ENABLED: false
+      GOTRUE_MAILER_OTP_EXP: 86400
     depends_on:
       supabase-db:
         condition: service_healthy
     networks:
       - apex-overflow-network
+    restart: unless-stopped
 
   # Supabase Studio for database management
   supabase-studio:
@@ -77,15 +103,21 @@ services:
     ports:
       - "${SUPABASE_STUDIO_PORT:-54323}:3000"
     environment:
-      SUPABASE_URL: http://supabase-api:8000
-      SUPABASE_REST_URL: http://localhost:${SUPABASE_API_PORT:-54321}/rest/v1/
+      SUPABASE_URL: http://localhost:${SUPABASE_API_PORT:-54321}
+      SUPABASE_REST_URL: http://supabase-rest:3000
       SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
       SUPABASE_SERVICE_KEY: ${SUPABASE_SERVICE_KEY}
-      STUDIO_PG_META_URL: http://localhost:${SUPABASE_API_PORT:-54321}/pg
+      STUDIO_PG_META_URL: http://supabase-rest:3000
+      POSTGRES_META_URL: http://supabase-rest:3000
+      LOGFLARE_API_KEY: ""
+      LOGFLARE_URL: ""
+      NEXT_PUBLIC_ENABLE_LOGS: "false"
     depends_on:
-      - supabase-api
+      - supabase-rest
+      - supabase-auth
     networks:
       - apex-overflow-network
+    restart: unless-stopped
 
   # Supabase Realtime for live updates (optional - can be enabled later)
   # supabase-realtime:

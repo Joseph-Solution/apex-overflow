@@ -1,1 +1,82 @@
-project_id = "cewgrolqmcuybnglzael"
+# Supabase local development configuration for containerized environment
+project_id = "apex-overflow-local"
+
+[api]
+enabled = true
+# Port for Supabase API Gateway (mapped to host port 54321)
+port = 54321
+# API schemas to expose
+schemas = ["public", "graphql_public"]
+# Extra search path for schemas
+extra_search_path = ["public", "extensions"]
+# Max rows returned by PostgREST
+max_rows = 1000
+
+[db]
+# Port for PostgreSQL database (mapped to host port 54322)
+port = 54322
+# Database configuration
+major_version = 15
+# Enable database extensions
+extensions = ["uuid-ossp", "pgcrypto"]
+
+[studio]
+enabled = true
+# Port for Supabase Studio (mapped to host port 54323)
+port = 54323
+# API URL for Studio to connect to
+api_url = "http://localhost:54321"
+
+[auth]
+enabled = true
+# Site URL for authentication redirects
+site_url = "http://localhost:8080"
+# Additional redirect URLs
+additional_redirect_urls = ["http://localhost:8080"]
+# JWT expiry time in seconds (1 hour)
+jwt_expiry = 3600
+# Enable email confirmations in development
+enable_confirmations = false
+# Enable email signup
+enable_signup = true
+
+[auth.email]
+# Enable email authentication
+enable_signup = true
+# Auto-confirm emails in development
+double_confirm_changes = false
+enable_confirmations = false
+
+# External OAuth providers (can be configured later)
+[auth.external.google]
+enabled = false
+client_id = ""
+secret = ""
+
+[realtime]
+enabled = false
+# Port for Realtime service (can be enabled later)
+# port = 54324
+
+[storage]
+enabled = false
+# Storage can be enabled later if needed
+# file_size_limit = "50MB"
+
+[edge_functions]
+enabled = false
+# Edge functions can be enabled later if needed
+
+[analytics]
+enabled = false
+
+# Local development settings
+[local]
+# Use local Docker network for service discovery
+hostname = "localhost"
+# Database settings for local development
+db_url = "postgresql://postgres:postgres@localhost:54322/postgres"
+# API settings
+api_url = "http://localhost:54321"
+# Studio settings  
+studio_url = "http://localhost:54323"

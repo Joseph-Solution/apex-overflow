@@ -8,7 +8,16 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "docker:dev": "docker-compose up",
+    "docker:dev:build": "docker-compose up --build",
+    "docker:dev:down": "docker-compose down",
+    "docker:dev:clean": "docker-compose down -v && docker system prune -f",
+    "docker:logs": "docker-compose logs -f",
+    "supabase:health": "bash scripts/health-check.sh",
+    "supabase:health:win": "scripts\\health-check.bat",
+    "supabase:studio": "start http://localhost:54323",
+    "supabase:logs": "docker-compose logs -f supabase-rest supabase-auth supabase-db"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
