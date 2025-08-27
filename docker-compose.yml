@@ -15,9 +15,11 @@ services:
       - NODE_ENV=development
       - VITE_SUPABASE_URL=http://localhost:54321
       - VITE_SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
     networks:
       - supabase_network_cewgrolqmcuybnglzael
-    command: bun run dev --host 0.0.0.0 --port ${FRONTEND_PORT:-3000}
+    command: bun run dev --host 0.0.0.0 --port ${FRONTEND_PORT:-3000} --force
 
 volumes:
   # Named volume for node_modules performance optimization

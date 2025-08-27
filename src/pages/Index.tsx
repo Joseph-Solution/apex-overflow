@@ -1,20 +1,31 @@
-import { useState } from 'react';
-import { Navigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Plus, LogOut } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
-import { useTasks, Task } from '@/hooks/useTasks';
-import TaskCard from '@/components/TaskCard';
-import TaskDialog from '@/components/TaskDialog';
-import { toast } from '@/hooks/use-toast';
+import { useState } from "react";
+import { Navigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Plus, LogOut } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useTasks, Task } from "@/hooks/useTasks";
+import TaskCard from "@/components/TaskCard";
+import TaskDialog from "@/components/TaskDialog";
+import { toast } from "@/hooks/use-toast";
 
 const Index = () => {
   const { user, loading, signOut } = useAuth();
-  const { tasks, loading: tasksLoading, createTask, updateTask, deleteTask } = useTasks();
+  const {
+    tasks,
+    loading: tasksLoading,
+    createTask,
+    updateTask,
+    deleteTask,
+  } = useTasks();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | undefined>();
 
-  console.log('Index page - User:', user?.email || 'No user', 'Loading:', loading);
+  console.log(
+    "Index page - User:",
+    user?.email || "No user",
+    "Loading:",
+    loading
+  );
 
   // Show loading state
   if (loading) {
@@ -27,11 +38,13 @@ const Index = () => {
 
   // Redirect to auth if not authenticated
   if (!user) {
-    console.log('No user, redirecting to auth');
+    console.log("No user, redirecting to auth");
     return <Navigate to="/auth" replace />;
   }
 
-  const handleCreateTask = async (taskData: Omit<Task, 'id' | 'created_at' | 'updated_at'>) => {
+  const handleCreateTask = async (
+    taskData: Omit<Task, "id" | "created_at" | "updated_at">
+  ) => {
     const { error } = await createTask(taskData);
     if (error) {
       toast({
@@ -47,9 +60,11 @@ const Index = () => {
     }
   };
 
-  const handleUpdateTask = async (taskData: Omit<Task, 'id' | 'created_at' | 'updated_at'>) => {
+  const handleUpdateTask = async (
+    taskData: Omit<Task, "id" | "created_at" | "updated_at">
+  ) => {
     if (!editingTask) return;
-    
+
     const { error } = await updateTask(editingTask.id, taskData);
     if (error) {
       toast({
@@ -108,10 +123,12 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <header className="border-b">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-foreground">Apex Overflow</h1>
+          <h1 className="text-3xl font-bold text-foreground">
+            Apex Overflow - HMR Working! 🔥
+          </h1>
           <div className="flex items-center space-x-4">
             <span className="text-sm text-muted-foreground">
               Welcome, {user.email}
@@ -127,8 +144,10 @@ const Index = () => {
       <main className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h2 className="text-2xl font-semibold mb-2 text-foreground">Tasks</h2>
-            <p className="text-muted-foreground">
+            <h2 className="text-2xl font-semibold mb-2 text-foreground">
+              Tasks
+            </h2>
+            <p className="text-black">
               Manage your tasks and stay organized
             </p>
           </div>
@@ -144,7 +163,9 @@ const Index = () => {
           </div>
         ) : tasks.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-muted-foreground mb-4">No tasks yet. Create your first task!</p>
+            <p className="text-muted-foreground mb-4">
+              No tasks yet. Create your first task!
+            </p>
             <Button onClick={handleNewTask}>
               <Plus className="h-4 w-4 mr-2" />
               Create Task
