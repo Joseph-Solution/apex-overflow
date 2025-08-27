@@ -2,8 +2,16 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-const SUPABASE_URL = "https://cewgrolqmcuybnglzael.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNld2dyb2xxbWN1eWJuZ2x6YWVsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MjE0MzQsImV4cCI6MjA3MDk5NzQzNH0.AfTM4F6-azCLGpFI3jZXVWhHAqKSbuXDybtso2LsIx8";
+// Use environment variables for local development, fallback to production
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "https://cewgrolqmcuybnglzael.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNld2dyb2xxbWN1eWJuZ2x6YWVsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MjE0MzQsImV4cCI6MjA3MDk5NzQzNH0.AfTM4F6-azCLGpFI3jZXVWhHAqKSbuXDybtso2LsIx8";
+
+// Log which Supabase instance we're connecting to
+console.log('🔗 Supabase Client Configuration:', {
+  url: SUPABASE_URL,
+  isLocal: SUPABASE_URL.includes('localhost'),
+  environment: import.meta.env.NODE_ENV
+});
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
