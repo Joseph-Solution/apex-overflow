@@ -3,6 +3,12 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  /* Glassmorphism effect for content area */
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  min-height: calc(100vh - 4rem);
 }
 
 .logo {
