@@ -99,7 +99,17 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  html {
+    /* Beautiful gradient background */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    /* Ensure body is transparent to show gradient */
+    background: transparent !important;
+    min-height: 100vh;
   }
 }
