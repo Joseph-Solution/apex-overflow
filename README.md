@@ -4,31 +4,78 @@
 
 **Application**: Apex Overflow Task Management System
 
-## How can I edit this code?
+## Development Setup
 
-There are several ways of editing your application.
+### Prerequisites
 
-**Use your preferred IDE**
+- **Bun** (recommended) or Node.js 18+ - [Install Bun](https://bun.sh/docs/installation)
+- **Docker & Docker Compose** - [Install Docker](https://docs.docker.com/get-docker/)
+- **Git** - [Install Git](https://git-scm.com/downloads)
 
-You can work locally using your own IDE by cloning this repo and pushing changes.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+### Quick Start
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
+# Step 1: Clone the repository
 git clone <YOUR_GIT_URL>
+cd apex-overflow
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Step 2: Copy environment configuration
+cp .env.example .env
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Step 3: Install dependencies
+bun install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+# Step 4: Start the development environment (includes Supabase backend)
+docker-compose up
+
+# Alternative: Start only the frontend (requires separate Supabase setup)
+bun run dev
 ```
+
+### Build Commands
+
+```sh
+# Development build
+bun run build:dev
+
+# Production build
+bun run build
+
+# Preview production build locally
+bun run preview
+
+# Lint code
+bun run lint
+
+# Fix linting issues
+bun run lint:fix
+```
+
+### Development Workflow
+
+1. **Full Stack Development** (Recommended):
+   ```sh
+   docker-compose up
+   ```
+   This starts:
+   - Frontend at http://localhost:3000
+   - Supabase Studio at http://localhost:54323
+   - Local database and API services
+
+2. **Frontend Only Development**:
+   ```sh
+   bun run dev
+   ```
+   Requires separate Supabase configuration
+
+3. **Database Management**:
+   ```sh
+   # Reset local database
+   supabase db reset
+   
+   # Generate TypeScript types
+   supabase gen types typescript --local > src/integrations/supabase/types.ts
+   ```
 
 ## Docker Development Environment
 
