@@ -127,7 +127,7 @@ const Index = () => {
       <header className="border-b">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-3xl font-bold text-foreground">
-            Apex Overflow - HMR Working! 🔥
+            Apex Overflow
           </h1>
           <div className="flex items-center space-x-4">
             <span className="text-sm text-muted-foreground">
