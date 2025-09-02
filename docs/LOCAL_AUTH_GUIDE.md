@@ -47,8 +47,8 @@ Your local development environment is now properly configured to use **local Sup
 
 - **Status:** Disabled in local development to avoid OAuth complexity
 - **Local Testing:** Use email authentication instead
-- **Production:** Google OAuth works normally in Lovable/production
-- **Error Prevention:** No more "OAuth client not found" errors locally/Lovable deployment
+- **Production:** Google OAuth works normally in production
+- **Error Prevention:** No more "OAuth client not found" errors locally
 
 ## 🔍 Verification
 
@@ -89,7 +89,7 @@ All emails sent by your local Supabase are captured by Inbucket:
    - Verify users in Supabase Studio
 
 3. **Production Deployment:**
-   - Your production environment (Lovable) automatically uses production Supabase
+   - Your production environment automatically uses production Supabase
    - Google OAuth works normally in production
    - No code changes needed for deployment
 
