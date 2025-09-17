@@ -7,13 +7,98 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "13.0.4"
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
   }
   public: {
     Tables: {
+      ai_suggestions: {
+        Row: {
+          applied: boolean
+          confidence: number | null
+          content: string
+          created_at: string
+          id: string
+          task_id: string | null
+          type: string
+          user_id: string
+        }
+        Insert: {
+          applied?: boolean
+          confidence?: number | null
+          content: string
+          created_at?: string
+          id?: string
+          task_id?: string | null
+          type: string
+          user_id: string
+        }
+        Update: {
+          applied?: boolean
+          confidence?: number | null
+          content?: string
+          created_at?: string
+          id?: string
+          task_id?: string | null
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_suggestions_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      categories: {
+        Row: {
+          color: string
+          created_at: string
+          id: string
+          name: string
+          user_id: string
+        }
+        Insert: {
+          color: string
+          created_at?: string
+          id?: string
+          name: string
+          user_id: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          id?: string
+          name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -44,37 +129,254 @@ export type Database = {
         }
         Relationships: []
       }
+      project_members: {
+        Row: {
+          id: string
+          joined_at: string
+          project_id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          joined_at?: string
+          project_id: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          joined_at?: string
+          project_id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_members_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projects: {
+        Row: {
+          color: string
+          created_at: string
+          description: string | null
+          id: string
+          is_shared: boolean
+          name: string
+          owner_id: string
+          updated_at: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_shared?: boolean
+          name: string
+          owner_id: string
+          updated_at?: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_shared?: boolean
+          name?: string
+          owner_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      task_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          task_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          task_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          task_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_comments_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tasks: {
         Row: {
+          actual_duration: number | null
+          assigned_to: string | null
+          category_id: string | null
           completed: boolean
           created_at: string
           description: string | null
           due_date: string | null
+          estimated_duration: number | null
           id: string
+          parent_task_id: string | null
+          position: number | null
           priority: string | null
+          project_id: string | null
+          recurrence_pattern: Json | null
+          tags: string[] | null
           title: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          actual_duration?: number | null
+          assigned_to?: string | null
+          category_id?: string | null
           completed?: boolean
           created_at?: string
           description?: string | null
           due_date?: string | null
+          estimated_duration?: number | null
           id?: string
+          parent_task_id?: string | null
+          position?: number | null
           priority?: string | null
+          project_id?: string | null
+          recurrence_pattern?: Json | null
+          tags?: string[] | null
           title: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          actual_duration?: number | null
+          assigned_to?: string | null
+          category_id?: string | null
           completed?: boolean
           created_at?: string
           description?: string | null
           due_date?: string | null
+          estimated_duration?: number | null
           id?: string
+          parent_task_id?: string | null
+          position?: number | null
           priority?: string | null
+          project_id?: string | null
+          recurrence_pattern?: Json | null
+          tags?: string[] | null
           title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tasks_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_parent_task_id_fkey"
+            columns: ["parent_task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      time_entries: {
+        Row: {
+          created_at: string
+          description: string | null
+          duration: number | null
+          end_time: string | null
+          id: string
+          start_time: string
+          task_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          duration?: number | null
+          end_time?: string | null
+          id?: string
+          start_time: string
+          task_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          duration?: number | null
+          end_time?: string | null
+          id?: string
+          start_time?: string
+          task_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "time_entries_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_profiles: {
+        Row: {
+          ai_settings: Json
+          created_at: string
+          id: string
+          preferences: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ai_settings?: Json
+          created_at?: string
+          id?: string
+          preferences?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ai_settings?: Json
+          created_at?: string
+          id?: string
+          preferences?: Json
           updated_at?: string
           user_id?: string
         }
@@ -85,7 +387,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      bulk_update_task_positions: {
+        Args: { updates: Json }
+        Returns: undefined
+      }
+      get_completion_trends: {
+        Args: { days?: number; user_id: string }
+        Returns: Json
+      }
+      get_productivity_stats: {
+        Args: { end_date?: string; start_date?: string; user_id: string }
+        Returns: Json
+      }
+      get_time_tracking_summary: {
+        Args: { end_date: string; start_date: string; user_id: string }
+        Returns: Json
+      }
     }
     Enums: {
       [_ in never]: never
@@ -214,7 +531,11 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {},
   },
 } as const
+

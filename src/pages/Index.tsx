@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Plus, LogOut } from "lucide-react";
+import { Plus, LogOut, BarChart3 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useTasks, Task } from "@/hooks/useTasks";
 import TaskCard from "@/components/TaskCard";
 import TaskDialog from "@/components/TaskDialog";
+import { FilterPanel, FilterOptions } from "@/components/FilterPanel";
+import { useTaskFilters } from "@/hooks/useTaskFilters";
 import { toast } from "@/hooks/use-toast";
 
 const Index = () => {
@@ -16,9 +18,21 @@ const Index = () => {
     createTask,
     updateTask,
     deleteTask,
+    updateTaskCompletion,
   } = useTasks();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | undefined>();
+  const [filters, setFilters] = useState<FilterOptions>({
+    search: '',
+    priority: 'all',
+    status: 'all',
+    category: null,
+    tags: [],
+    projects: [],
+    dueDateRange: 'all',
+  });
+
+  const { filteredTasks, filterStats } = useTaskFilters(tasks, filters);
 
   console.log(
     "Index page - User:",
@@ -43,7 +57,7 @@ const Index = () => {
   }
 
   const handleCreateTask = async (
-    taskData: Omit<Task, "id" | "created_at" | "updated_at">
+    taskData: Omit<Task, "id" | "created_at" | "updated_at" | "user_id">
   ) => {
     const { error } = await createTask(taskData);
     if (error) {
@@ -61,7 +75,7 @@ const Index = () => {
   };
 
   const handleUpdateTask = async (
-    taskData: Omit<Task, "id" | "created_at" | "updated_at">
+    taskData: Omit<Task, "id" | "created_at" | "updated_at" | "user_id">
   ) => {
     if (!editingTask) return;
 
@@ -82,7 +96,7 @@ const Index = () => {
   };
 
   const handleToggleComplete = async (id: string, completed: boolean) => {
-    const { error } = await updateTask(id, { completed });
+    const { error } = await updateTaskCompletion(id, completed);
     if (error) {
       toast({
         variant: "destructive",
@@ -130,7 +144,7 @@ const Index = () => {
             Apex Overflow
           </h1>
           <div className="flex items-center space-x-4">
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm text-foreground">
               Welcome, {user.email}
             </span>
             <Button variant="ghost" size="sm" onClick={handleSignOut}>
@@ -142,19 +156,36 @@ const Index = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
+        <div className="mb-8">
           <div>
             <h2 className="text-2xl font-semibold mb-2 text-foreground">
               Tasks
             </h2>
-            <p className="text-black">
-              Manage your tasks and stay organized
-            </p>
+            <div className="flex items-center gap-4">
+              <p className="text-foreground">
+                Manage your tasks and stay organized
+              </p>
+              {filterStats.filtered !== filterStats.total && (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <BarChart3 className="w-4 h-4" />
+                  Showing {filterStats.filtered} of {filterStats.total} tasks
+                  {filterStats.completionRate > 0 && (
+                    <span className="text-green-600">
+                      ({filterStats.completionRate}% complete)
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
-          <Button onClick={handleNewTask}>
-            <Plus className="h-4 w-4 mr-2" />
-            New Task
-          </Button>
+        </div>
+
+        {/* Filter Panel */}
+        <div className="mb-6">
+          <FilterPanel
+            filters={filters}
+            onFiltersChange={setFilters}
+          />
         </div>
 
         {tasksLoading ? (
@@ -164,24 +195,42 @@ const Index = () => {
         ) : tasks.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-muted-foreground mb-4">
-              No tasks yet. Create your first task!
+              No tasks yet. Create your first task using the button in the bottom right corner!
             </p>
-            <Button onClick={handleNewTask}>
-              <Plus className="h-4 w-4 mr-2" />
-              Create Task
+          </div>
+        ) : filteredTasks.filter((task) => !task.parent_task_id).length === 0 ? (
+          <div className="text-center py-8">
+            <p className="text-muted-foreground mb-4">
+              No tasks match your current filters.
+            </p>
+            <Button 
+              variant="outline" 
+              onClick={() => setFilters({
+                search: '',
+                priority: 'all',
+                status: 'all',
+                category: null,
+                tags: [],
+                projects: [],
+                dueDateRange: 'all',
+              })}
+            >
+              Clear Filters
             </Button>
           </div>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {tasks.map((task) => (
-              <TaskCard
-                key={task.id}
-                task={task}
-                onToggleComplete={handleToggleComplete}
-                onDelete={handleDeleteTask}
-                onEdit={handleEditTask}
-              />
-            ))}
+            {filteredTasks
+              .filter((task) => !task.parent_task_id) // Only show parent tasks, subtasks are shown within TaskDialog
+              .map((task) => (
+                <TaskCard
+                  key={task.id}
+                  task={task}
+                  onToggleComplete={handleToggleComplete}
+                  onDelete={handleDeleteTask}
+                  onEdit={handleEditTask}
+                />
+              ))}
           </div>
         )}
 
@@ -192,6 +241,15 @@ const Index = () => {
           onSave={editingTask ? handleUpdateTask : handleCreateTask}
         />
       </main>
+
+      {/* Floating Action Button */}
+      <Button
+        onClick={handleNewTask}
+        className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-shadow z-50"
+        size="icon"
+      >
+        <Plus className="h-6 w-6" />
+      </Button>
     </div>
   );
 };
