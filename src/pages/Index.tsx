@@ -144,6 +144,10 @@ const Index = () => {
             Apex Overflow
           </h1>
           <div className="flex items-center space-x-4">
+            <Button onClick={handleNewTask} className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              Create Tasks
+            </Button>
             <span className="text-sm text-foreground">
               Welcome, {user.email}
             </span>
@@ -195,7 +199,7 @@ const Index = () => {
         ) : tasks.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-muted-foreground mb-4">
-              No tasks yet. Create your first task using the button in the bottom right corner!
+              No tasks yet. Create your first task using the "Create Tasks" button in the header!
             </p>
           </div>
         ) : filteredTasks.filter((task) => !task.parent_task_id).length === 0 ? (
@@ -242,14 +246,7 @@ const Index = () => {
         />
       </main>
 
-      {/* Floating Action Button */}
-      <Button
-        onClick={handleNewTask}
-        className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-shadow z-50"
-        size="icon"
-      >
-        <Plus className="h-6 w-6" />
-      </Button>
+
     </div>
   );
 };

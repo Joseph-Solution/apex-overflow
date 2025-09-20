@@ -71,3 +71,4 @@ supabase/.temp
 .kiro
 
 supabase/.branches
+supabase/.temp/
